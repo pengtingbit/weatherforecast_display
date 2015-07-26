@@ -1,0 +1,50 @@
+import urllib
+from bs4 import *
+
+def scrap_and_save():
+	debug = 0
+
+	soup = BeautifulSoup(urllib.urlopen("http://www.accuweather.com/en/de/braunschweig/38100/hourly-weather-forecast/169823"))
+	title = soup.title.text
+	file = open('result.txt', 'w')
+	if(debug):
+		print(title)
+	#scrap date of today
+	#date_list = soup.find(attrs = {"class":"bg bg-s"})
+	date_list = soup.find(attrs = {"id":"feed-tabs"})
+	print(date_list.h4.contents[0])
+	file.write(date_list.h4.contents[0])
+	file.write('\n')
+	#scrap today's highest and lowest temperatures
+	high_temperature_list = soup.find(attrs = {"class":"temp"})
+	#print "foundTemperature = ", high_temperature_list
+	if(high_temperature_list):
+		high_temperature = high_temperature_list.contents
+		if(debug):
+			print "high_temperature = ", high_temperature[0]
+		else:
+			print(high_temperature[0])
+			file.write(high_temperature[0])
+			file.write('\n')
+	low_temperature_list = soup.find(attrs = {"class":"low"})
+	if(low_temperature_list):
+		low_temperature = low_temperature_list.contents
+		low_temperature[1] = low_temperature[1].replace(" ","")
+		if(debug):
+			print "low_temperature = ", low_temperature[1]
+		else:
+			print(low_temperature[1])
+			file.write(low_temperature[1])
+			file.write('\n')
+	#scrap today's weather condition
+	condition_list = soup.find(attrs = {"class":"cond"})
+	if(condition_list):
+		weather_condition = condition_list.contents
+		if(debug):
+			print "weather_condition = ", weather_condition[0]
+		else:
+			print(weather_condition[0])
+			file.write(weather_condition[0])
+			file.write('\n')
+	#close file result.txt
+	file.close()
